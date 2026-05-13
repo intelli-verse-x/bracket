@@ -44,20 +44,20 @@ async def test_create_stage_item(
             StageItemInputCreateBodyFinal(slot=1, team_id=team_inserted_1.id).model_dump(),
             StageItemInputCreateBodyFinal(slot=2, team_id=team_inserted_2.id).model_dump(),
         ]
-        assert (
-            await send_tournament_request(
-                HTTPMethod.POST,
-                "stage_items",
-                auth_context,
-                json={
-                    "type": StageType.SINGLE_ELIMINATION.value,
-                    "team_count": 2,
-                    "stage_id": stage_inserted_1.id,
-                    "inputs": inputs,
-                },
-            )
-            == SUCCESS_RESPONSE
+        response = await send_tournament_request(
+            HTTPMethod.POST,
+            "stage_items",
+            auth_context,
+            json={
+                "type": StageType.SINGLE_ELIMINATION.value,
+                "team_count": 2,
+                "stage_id": stage_inserted_1.id,
+                "inputs": inputs,
+            },
         )
+        assert response["data"]["id"]
+        assert response["data"]["stage_id"] == stage_inserted_1.id
+        assert response["data"]["type"] == StageType.SINGLE_ELIMINATION.value
         await assert_row_count_and_clear(matches, 1)
         await assert_row_count_and_clear(rounds, 1)
         await assert_row_count_and_clear(stage_items, 1)
