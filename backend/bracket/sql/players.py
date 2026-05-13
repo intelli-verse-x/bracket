@@ -88,8 +88,8 @@ async def sql_delete_players_of_tournament(tournament_id: TournamentId) -> None:
     await database.fetch_one(query=query, values={"tournament_id": tournament_id})
 
 
-async def insert_player(player_body: PlayerBody, tournament_id: TournamentId) -> None:
-    await database.execute(
+async def insert_player(player_body: PlayerBody, tournament_id: TournamentId) -> Player:
+    player_id = await database.execute(
         query=players.insert(),
         values=PlayerToInsert(
             **player_body.model_dump(),
@@ -99,3 +99,6 @@ async def insert_player(player_body: PlayerBody, tournament_id: TournamentId) ->
             swiss_score=Decimal("0.0"),
         ).model_dump(),
     )
+    result = await get_player_by_id(PlayerId(player_id), tournament_id)
+    assert result is not None
+    return result
