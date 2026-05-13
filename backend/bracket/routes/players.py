@@ -84,17 +84,16 @@ async def delete_player(
     return SuccessResponse()
 
 
-@router.post("/tournaments/{tournament_id}/players", response_model=SuccessResponse)
+@router.post("/tournaments/{tournament_id}/players", response_model=SinglePlayerResponse)
 async def create_single_player(
     player_body: PlayerBody,
     tournament_id: TournamentId,
     user: UserPublic = Depends(user_authenticated_for_tournament),
     _: Tournament = Depends(disallow_archived_tournament),
-) -> SuccessResponse:
+) -> SinglePlayerResponse:
     existing_players = await get_all_players_in_tournament(tournament_id)
     check_requirement(existing_players, user, "max_players")
-    await insert_player(player_body, tournament_id)
-    return SuccessResponse()
+    return SinglePlayerResponse(data=await insert_player(player_body, tournament_id))
 
 
 @router.post("/tournaments/{tournament_id}/players_multi", response_model=SuccessResponse)

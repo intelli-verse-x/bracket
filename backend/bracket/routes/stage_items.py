@@ -34,7 +34,7 @@ from bracket.models.db.util import StageItemWithRounds
 from bracket.routes.auth import (
     user_authenticated_for_tournament,
 )
-from bracket.routes.models import SuccessResponse
+from bracket.routes.models import SingleStageItemResponse, SuccessResponse
 from bracket.routes.util import disallow_archived_tournament, stage_item_dependency
 from bracket.sql.courts import get_all_courts_in_tournament
 from bracket.sql.matches import (
@@ -81,12 +81,12 @@ async def delete_stage_item(
     return SuccessResponse()
 
 
-@router.post("/tournaments/{tournament_id}/stage_items", response_model=SuccessResponse)
+@router.post("/tournaments/{tournament_id}/stage_items", response_model=SingleStageItemResponse)
 async def create_stage_item(
     tournament_id: TournamentId,
     stage_body: StageItemCreateBody,
     user: UserPublic = Depends(user_authenticated_for_tournament),
-) -> SuccessResponse:
+) -> SingleStageItemResponse:
     await check_foreign_keys_belong_to_tournament(stage_body, tournament_id)
 
     stages = await get_full_tournament_details(tournament_id)
@@ -95,7 +95,7 @@ async def create_stage_item(
 
     stage_item = await sql_create_stage_item_with_empty_inputs(tournament_id, stage_body)
     await build_matches_for_stage_item(stage_item, tournament_id)
-    return SuccessResponse()
+    return SingleStageItemResponse(data=stage_item)
 
 
 @router.put(

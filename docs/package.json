@@ -3,9 +3,9 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "build": "next build",
-    "dev": "next dev",
-    "start": "next start",
+    "build": "node init && next build",
+    "dev": "node init && next dev",
+    "start": "node init && next start",
     "prettier:check": "prettier --check \"**/*.{js,jsx,ts,tsx}\"",
     "prettier:write": "prettier --list-different --write \"**/*.{js,jsx,ts,tsx}\"",
     "test": "pnpm run prettier:write && pnpm markdownlint-cli2 --fix --config .markdownlint-cli2.mjs",
