@@ -19,6 +19,7 @@ from bracket.routes.auth import (
     user_authenticated_or_public_dashboard,
 )
 from bracket.routes.models import (
+    SingleStageResponse,
     StageItemInputOptionsResponse,
     StageRankingResponse,
     StagesWithStageItemsResponse,
@@ -79,17 +80,16 @@ async def delete_stage(
     return SuccessResponse()
 
 
-@router.post("/tournaments/{tournament_id}/stages", response_model=SuccessResponse)
+@router.post("/tournaments/{tournament_id}/stages", response_model=SingleStageResponse)
 async def create_stage(
     tournament_id: TournamentId,
     user: UserPublic = Depends(user_authenticated_for_tournament),
     _: Tournament = Depends(disallow_archived_tournament),
-) -> SuccessResponse:
+) -> SingleStageResponse:
     existing_stages = await get_full_tournament_details(tournament_id)
     check_requirement(existing_stages, user, "max_stages")
 
-    await sql_create_stage(tournament_id)
-    return SuccessResponse()
+    return SingleStageResponse(data=await sql_create_stage(tournament_id))
 
 
 @router.put("/tournaments/{tournament_id}/stages/{stage_id}", response_model=SuccessResponse)

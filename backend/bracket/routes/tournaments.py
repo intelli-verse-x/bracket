@@ -155,10 +155,10 @@ async def change_status(
     return SuccessResponse()
 
 
-@router.post("/tournaments", response_model=SuccessResponse)
+@router.post("/tournaments", response_model=TournamentResponse)
 async def create_tournament(
     tournament_to_insert: TournamentBody, user: UserPublic = Depends(user_authenticated)
-) -> SuccessResponse:
+) -> TournamentResponse:
     existing_tournaments = await sql_get_tournaments((tournament_to_insert.club_id,))
     check_requirement(existing_tournaments, user, "max_tournaments")
 
@@ -177,7 +177,7 @@ async def create_tournament(
         ranking = RankingCreateBody()
         await sql_create_ranking(tournament_id, ranking, position=0)
 
-    return SuccessResponse()
+    return TournamentResponse(data=await sql_get_tournament(tournament_id))
 
 
 @router.post("/tournaments/{tournament_id}/logo")

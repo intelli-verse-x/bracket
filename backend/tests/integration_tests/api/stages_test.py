@@ -95,14 +95,13 @@ async def test_create_stage(
     async with inserted_team(
         DUMMY_TEAM1.model_copy(update={"tournament_id": auth_context.tournament.id})
     ):
-        assert (
-            await send_tournament_request(
-                HTTPMethod.POST,
-                "stages",
-                auth_context,
-            )
-            == SUCCESS_RESPONSE
+        response = await send_tournament_request(
+            HTTPMethod.POST,
+            "stages",
+            auth_context,
         )
+        assert response["data"]["id"]
+        assert response["data"]["tournament_id"] == auth_context.tournament.id
         await assert_row_count_and_clear(rounds, 1)
         await assert_row_count_and_clear(stage_items, 1)
         await assert_row_count_and_clear(stages, 1)

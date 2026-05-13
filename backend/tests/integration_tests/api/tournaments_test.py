@@ -88,10 +88,10 @@ async def test_create_tournament(
         "duration_minutes": 12,
         "margin_minutes": 3,
     }
-    assert (
-        await send_auth_request(HTTPMethod.POST, "tournaments", auth_context, json=body)
-        == SUCCESS_RESPONSE
-    )
+    response = await send_auth_request(HTTPMethod.POST, "tournaments", auth_context, json=body)
+    assert response["data"]["name"] == body["name"]
+    assert response["data"]["dashboard_endpoint"] == dashboard_endpoint
+    assert response["data"]["id"]
 
     # Cleanup
     tournament = assert_some(await sql_get_tournament_by_endpoint_name(dashboard_endpoint))

@@ -6,6 +6,8 @@ from bracket.models.db.court import Court
 from bracket.models.db.match import Match, SuggestedMatch
 from bracket.models.db.player import Player
 from bracket.models.db.ranking import Ranking
+from bracket.models.db.stage import Stage
+from bracket.models.db.stage_item import StageItem
 from bracket.models.db.stage_item_inputs import (
     StageItemInputOptionFinal,
     StageItemInputOptionTentative,
@@ -56,6 +58,14 @@ class SinglePlayerResponse(DataResponse[Player]):
 
 
 class StagesWithStageItemsResponse(DataResponse[list[StageWithStageItems]]):
+    pass
+
+
+class SingleStageResponse(DataResponse[Stage]):
+    pass
+
+
+class SingleStageItemResponse(DataResponse[StageItem]):
     pass
 
 
