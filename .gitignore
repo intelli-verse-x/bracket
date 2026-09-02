@@ -18,4 +18,3 @@ backend/frontend-dist
 
 /process-compose.yml
 .firecrawl/
-config.bat
