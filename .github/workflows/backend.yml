@@ -13,6 +13,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-24.04
+    timeout-minutes: 30
 
     services:
       postgres:
@@ -25,7 +26,9 @@ jobs:
           - 5532:5432
 
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
 
       - uses: actions/setup-python@v7.0.0
         with:
@@ -48,6 +51,7 @@ jobs:
           ENVIRONMENT: CI
 
       - name: Upload coverage report to Codecov
+        if: github.repository == 'evroon/bracket'
         uses: codecov/codecov-action@v7
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
