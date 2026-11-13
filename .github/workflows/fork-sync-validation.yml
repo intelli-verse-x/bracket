@@ -37,6 +37,20 @@ jobs:
         env:
           ENVIRONMENT: CI
         run: uv run --locked pytest .
+      - name: Generate schema diagnostic after fixture run
+        if: always()
+        working-directory: backend
+        env:
+          ENVIRONMENT: CI
+        run: uv run --locked python cli.py generate-openapi
+      - name: Save generated public schema for review
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: generated-openapi
+          path: backend/openapi/openapi.json
+          retention-days: 1
+          if-no-files-found: error
   frontend:
     runs-on: ubuntu-latest
     timeout-minutes: 20
