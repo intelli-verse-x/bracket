@@ -1605,6 +1605,30 @@
         "title": "SinglePlayerResponse",
         "type": "object"
       },
+      "SingleStageItemResponse": {
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/StageItem"
+          }
+        },
+        "required": [
+          "data"
+        ],
+        "title": "SingleStageItemResponse",
+        "type": "object"
+      },
+      "SingleStageResponse": {
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/Stage"
+          }
+        },
+        "required": [
+          "data"
+        ],
+        "title": "SingleStageResponse",
+        "type": "object"
+      },
       "SingleTeamResponse": {
         "properties": {
           "data": {
@@ -1615,6 +1639,40 @@
           "data"
         ],
         "title": "SingleTeamResponse",
+        "type": "object"
+      },
+      "Stage": {
+        "properties": {
+          "created": {
+            "format": "date-time",
+            "title": "Created",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "is_active": {
+            "title": "Is Active",
+            "type": "boolean"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "tournament_id": {
+            "title": "Tournament Id",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "tournament_id",
+          "name",
+          "created",
+          "is_active",
+          "id"
+        ],
+        "title": "Stage",
         "type": "object"
       },
       "StageActivateBody": {
@@ -1633,6 +1691,58 @@
           "direction"
         ],
         "title": "StageActivateBody",
+        "type": "object"
+      },
+      "StageItem": {
+        "properties": {
+          "created": {
+            "format": "date-time",
+            "title": "Created",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "ranking_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ranking Id"
+          },
+          "stage_id": {
+            "title": "Stage Id",
+            "type": "integer"
+          },
+          "team_count": {
+            "maximum": 64.0,
+            "minimum": 2.0,
+            "title": "Team Count",
+            "type": "integer"
+          },
+          "type": {
+            "$ref": "#/components/schemas/StageType"
+          }
+        },
+        "required": [
+          "stage_id",
+          "name",
+          "created",
+          "type",
+          "team_count",
+          "ranking_id",
+          "id"
+        ],
+        "title": "StageItem",
         "type": "object"
       },
       "StageItemActivateNextBody": {
@@ -3330,7 +3440,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/SuccessResponse"
+                  "$ref": "#/components/schemas/TournamentResponse"
                 }
               }
             },
@@ -4314,7 +4424,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/SuccessResponse"
+                  "$ref": "#/components/schemas/SinglePlayerResponse"
                 }
               }
             },
@@ -4989,7 +5099,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/SuccessResponse"
+                  "$ref": "#/components/schemas/SingleStageItemResponse"
                 }
               }
             },
@@ -5484,7 +5594,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/SuccessResponse"
+                  "$ref": "#/components/schemas/SingleStageResponse"
                 }
               }
             },
