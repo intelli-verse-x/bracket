@@ -1,0 +1,70 @@
+name: Fork sync validation
+on:
+  push:
+    branches: ['org-sync/upstream-*']
+  pull_request:
+    branches: [master]
+permissions:
+  contents: read
+jobs:
+  backend-fixtures:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: bracket_ci
+          POSTGRES_PASSWORD: bracket_ci
+          POSTGRES_DB: bracket_ci
+        ports: ['5532:5432']
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 12
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7
+        with:
+          python-version: '3.12'
+      - name: Install fixture runner
+        run: python -m pip install uv
+      - name: Run locked ephemeral database fixtures
+        working-directory: backend
+        env:
+          ENVIRONMENT: CI
+        run: uv run --locked pytest .
+      - name: Generate schema diagnostic after fixture run
+        if: always()
+        working-directory: backend
+        env:
+          ENVIRONMENT: CI
+        run: uv run --locked python cli.py generate-openapi
+      - name: Save generated public schema for review
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: generated-openapi
+          path: backend/openapi/openapi.json
+          retention-days: 1
+          if-no-files-found: error
+  frontend:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
+        with:
+          node-version: '22'
+      - name: Enable package manager
+        run: corepack enable
+      - name: Validate locked frontend
+        working-directory: frontend
+        run: |
+          pnpm install --frozen-lockfile
+          pnpm test
